@@ -4,18 +4,11 @@
 #include <time.h>
 #include <chrono>
 #include "/public/read.h"
-void print_dummy_question() {
-	//function to be replaced by bulletpoint #3
-	std::cout << "  What is 4 + 2?\n";
-	std::cout << "   a.) 5\n";
-	std::cout << "   b.) 4\n";
-	std::cout << "   c.) 6\n";
-	std::cout << "   d.) 8\n" << std::endl;
-}
+
 
 bool volleyball(double &time_to_beat, std::vector<trivia_question> &vec) {
 	auto start = std::chrono::steady_clock::now();
-	//print_dummy_question();
+	//print random question
 	int question_num = rand() % vec.size();
 	trivia_question current = vec.at(question_num);
 	current.print_question();
@@ -26,6 +19,7 @@ bool volleyball(double &time_to_beat, std::vector<trivia_question> &vec) {
 		std::cout << "Please enter a,b,c, or d." << std::endl;
 		player_answer = read();
 	}
+	//check player answer and time taken
 	if (current.check_answer(player_answer)) {
 		auto end = std::chrono::steady_clock::now();
 		double elapsed_time = std::chrono::duration<double>(end - start).count(); 
