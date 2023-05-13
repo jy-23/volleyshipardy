@@ -11,20 +11,15 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <unistd.h>
 #include <boost/asio.hpp>
-#include "battleship.h"
+#include "/public/colors.h"
+#include "new_battleship.h"
+#include "common.h"
 #include "jeopardy.h"
 #include "volleyball.h"
 using namespace std;
 using boost::asio::ip::tcp;
-
-#define MSG_READY_TO_PLAY     100
-#define MSG_START_QUIZ 		  101
-#define MSG_YOUR_TURN 		  102
-#define MSG_YOUR_ATTACK 	  103
-#define MSG_ATTACK_COORDINATE 104
-#define MSG_HIT 			  105
-#define MSG_MISS 			  106
 
 int main(int argc, char* argv[])
 { srand(time(0)+1);
@@ -43,33 +38,33 @@ int main(int argc, char* argv[])
 			cout << "Unable to connect: " << s.error().message() << endl;
 			return EXIT_FAILURE;
 		}
-		int message_type = 0;
-		cout << "Player 2\n" << endl;
+		clearscreen();
+		int message_code = 0;
+		Battleship_Player p2;
+		p2.setName("Player 2");
+		//cout << "Player 2\n" << endl;
 		vector<trivia_question> vec;
 		input_questions(vec);
 
 
 		//initialize battleship
-		initializeP2();
+		p2.initialize();
+
 		s << MSG_READY_TO_PLAY << endl;
-		s >> message_type;
+		s >> message_code;
 		
-		//string message = "";
 		double time_to_beat = 60;
 		while(true) {
+			p2.printBoards();
 			cout << "Player 1's Turn: \n" << endl;
-			s >> message_type;
-			if (message_type == MSG_YOUR_ATTACK) {
-				cout << "Player 2 attacks" << endl;
-				for (int i = 0; i < 3; i++) p2Turn();
-			}
+			if(sendAttack(p2, s)) return 0;
 			s >> time_to_beat;
-			cout << "Player 2's Turn: \n" << endl;
+			p2.printBoards();
+			cout << "Your Turn: \n" << endl;
 			
 			if (!volleyball(time_to_beat, vec)) {
-				//player 1 makes shots (bulletpoint #2)
-				s << MSG_YOUR_ATTACK << endl;
-				cout << "Player 1 attacks" << endl;
+				//player 1 makes shots
+				if(!receiveAttack(p2, s)) return 0;
 				//reset timer when one round of volleyardy ends
 				time_to_beat = 60;
 			}

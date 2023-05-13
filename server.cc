@@ -14,7 +14,9 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <boost/asio.hpp>
-#include "battleship.h"
+#include "/public/colors.h"
+#include "new_battleship.h"
+#include "common.h"
 #include "jeopardy.h"
 #include "volleyball.h"
 using namespace std;
@@ -26,14 +28,6 @@ string make_daytime_string()
   time_t now = time(0);
   return ctime(&now);
 }
-
-#define MSG_READY_TO_PLAY     100
-#define MSG_START_QUIZ 		  101
-#define MSG_YOUR_TURN 		  102
-#define MSG_YOUR_ATTACK 	  103
-#define MSG_ATTACK_COORDINATE 104
-#define MSG_HIT 			  105
-#define MSG_MISS 			  106
 
 int main()
 { 
@@ -48,31 +42,35 @@ int main()
     {
       tcp::iostream stream;
       boost::system::error_code ec;
+	  clearscreen();
 	  cout << "Waiting for player 2 to connect" << endl;
       acceptor.accept(stream.socket(), ec);
       if (!ec)
-      {
-		int message_type = 0;
+      { 
+		clearscreen();
+		cout << "Connected!" << endl;
+		usleep(333333);
+		int message_code = 0;
         srand(time(0));
-		cout << "Player 1\n" << endl;
+		Battleship_Player p1;
+		p1.setName("Player 1");
 		vector<trivia_question> vec;
 		input_questions(vec);
 		
 		//initialize battleship
-		initializeP1();
-		
+		p1.initialize();
+		//cout << "Player 1\n" << endl;
+
 		stream << MSG_READY_TO_PLAY << endl;
-		stream >> message_type;	
+		stream >> message_code;
+
 
 		double time_to_beat = 60;
-		//string message = "";
 		while (true) {
-			cout << "Player 1's Turn: \n" << endl;
+			p1.printBoards();
+			cout << "Your Turn: \n" << endl;
 			if (!volleyball(time_to_beat, vec)) {
-				//player 2 makes 3 shots (bulletpoint #2)
-				stream << MSG_YOUR_ATTACK << endl;
-				cout << "Player 2 attacks" << endl;
-				//reset timer when one round of volleyardy ends
+				if(!receiveAttack(p1, stream)) return 0;
 				time_to_beat = 60;
 			}
 			else {
@@ -80,16 +78,11 @@ int main()
 			}
 			
 			stream << time_to_beat << endl;
+			p1.printBoards();
 			cout << "Player 2's Turn" << endl;
-			
-			stream >> message_type;
-			if (message_type == MSG_YOUR_ATTACK) {
-				cout << "Player 1 attacks" << endl;
-				for (int i = 0; i < 3; i++) p1Turn();
-			}
+			if (sendAttack(p1, stream)) return 0;
 			stream >> time_to_beat;
 		}
-
       }
     }
   }
