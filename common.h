@@ -16,12 +16,16 @@
 #define MSG_YOU_WON 109
 
 bool receiveAttack(Battleship_Player &player, boost::asio::ip::tcp::iostream &s) {
+	auto[t_rows,t_cols] = get_terminal_size();
 	s << MSG_YOUR_ATTACK << std::endl;
-	std::cout << player.getName() << " attacks" << std::endl;
+	clear_bottom_screen(0);
+	//std::cout << player.getName() << " attacks" << std::endl;
 	std::string message_str = "";
 	for (int i = 0; i < 3; i++) {
 		char row = ' ';
 		int col = -1;
+		movecursor(25,t_cols/2-7);
+		std::cout << "Incoming attack!" << std::endl;
 		while(true) {
 			s >> row;
 			s >> col;
@@ -39,6 +43,8 @@ bool receiveAttack(Battleship_Player &player, boost::asio::ip::tcp::iostream &s)
 			}
 			else if (message_str.at(0) == 'V') {
 				s << MSG_YOU_WON << std::endl;
+				clear_bottom_screen(0);
+				movecursor(25, t_cols-24);
 				std::cout << "DEFEAT! Your entire fleet has been destroyed!" << std::endl;
 				return 0;
 			}
@@ -52,28 +58,58 @@ bool receiveAttack(Battleship_Player &player, boost::asio::ip::tcp::iostream &s)
 }
 
 bool sendAttack(Battleship_Player &player, boost::asio::ip::tcp::iostream &s) {
+	auto[t_rows,t_cols] = get_terminal_size();
 	std::string message_str = "";
 	int message_code = 0;
 	s >> message_code;
 	if (message_code != MSG_YOUR_ATTACK) return 0;
-	std::cout << "You attack!" << std::endl;
+	clear_bottom_screen(0);
+	movecursor(25, t_cols/2-24);
+	std::cout << "Your attack! You get 3 shots at the enemy." << std::endl;
+	sleep(2);
+	clear_bottom_screen(0);
 	for (int i = 0; i < 3; i++) {
 		while(true) {
+			movecursor(25,t_cols/2-24);
 			std::cout << "Enter coordinate to attack in the format: A1" << std::endl;
-			char row = read();
-			int col = read();
-			s << row << std::endl;
+			movecursor(27,t_cols/2-1);
+			int row = 0;
+			int col = 0;
+			set_raw_mode(true);
+			while(true) {
+				row = quick_read();
+				if (row >= 'A' and row != 127) break;
+			}
+			set_raw_mode(false);
+			std::cout << (char)row << std::flush;
+			usleep(200000);
+			set_raw_mode(true);
+			while(true) {
+				col = quick_read();
+				if (col >= '0' and col != 127) break;
+			}
+			col = col - '0';
+			set_raw_mode(false);
+			std::cout << (char)row;
+			usleep(200000);
+			s << (char)row << std::endl;
 			s << col << std::endl;
 			s >> message_str;
 			s >> message_code;
+			clear_bottom_screen(0);
+			//movecursor(25,t_cols/2 - 20);
 			if (message_code == MSG_MISS) {
 				player.myAttack(row, col, MISS);
+				movecursor(25,t_cols/2-2);
 				std::cout << message_str << std::endl;
+				sleep(2);
 				break;
 			}
 			else if (message_code == MSG_HIT) {
 				player.myAttack(row, col, HIT);
+				movecursor(25,t_cols/2-2);
 				std::cout << message_str << std::endl;
+				sleep(2);
 				break;
 			}/*
 			else if (message_code == MSG_OUT_OF_BOUNDS) {
@@ -85,7 +121,13 @@ bool sendAttack(Battleship_Player &player, boost::asio::ip::tcp::iostream &s) {
 			else if (message_code == MSG_YOU_WON) {
 				player.myAttack(row, col, HIT);
 				std::cout << message_str << std::endl;
+				sleep(2);
 				return 1;
+			}
+			else {
+				movecursor(25,t_cols/2-24);
+				std::cout << message_str << std::endl;
+				sleep(2);
 			}
 		}
 	}

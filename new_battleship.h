@@ -16,6 +16,14 @@ static const char MISS = 'X';
 
 static const int SIZE = 10;
 
+void clear_bottom_screen(int row_change) {
+	auto[rows,cols] = get_terminal_size();
+	movecursor(25 + row_change,0);
+	//setbgcolor(255,255,255);
+	for (int i = 25 + row_change; i <= rows; i++) std::cout << std::setw(cols) << "" << std::endl;
+	//resetcolor();
+}
+
 class Battleship_Player {
 	private:
 		std::string name = "";
@@ -29,6 +37,8 @@ class Battleship_Player {
 		std::vector<std::vector<char>> myAttackBoard {SIZE, std::vector<char>(SIZE, '~')};
 		int hitCount = 0;
 		bool placeShip(Battleship &warship, char row, int col, char o) {
+			auto[rows,cols] = get_terminal_size();
+			movecursor(27,cols/2-24);
 			if (o != 'S' and o != 's' and o != 'E' and o != 'e') {
 				std::cout << "Invalid orientation! Please enter S or E." << std::endl;
 				return false;
@@ -71,33 +81,72 @@ class Battleship_Player {
 		void setName(std::string userName) { name = userName; }
 		std::string getName() { return name; }
 		void printBoards() {
-			if(system("figlet Volleyshipardy"));
 			auto [rows,cols] = get_terminal_size();
+			movecursor(0,0);
+			setcolor(214, 226, 233);
+			if(system ("figlet -c -t *Volleyshipardy*")) {};
+			resetcolor();
 
-			std::cout << std::setfill('-') << std::setw(SIZE*8+1) << "" << std::endl;
+
+			std::cout << std::setfill('-') << std::setw(cols) << "" << std::endl;
 			std::cout << std::setfill(' ');
-			std::cout << std::setw(SIZE+SIZE/2) << "" << std::setw(SIZE*3-SIZE/2) << std::left << "My Fleet" << "|";
-			std::cout << std::setw(SIZE*3-SIZE/2) << std::right << "Enemy Fleet" << std::endl;
-			std::cout << std::setfill('-') << std::setw(SIZE*8+1) << "" << std::endl << std::endl;
-			std::cout << std::setfill(' ') << std::setw(SIZE) << "";
-			for (int i = 0; i < SIZE; i++) std::cout << i << ' ';
-			std::cout << std::setw(SIZE) << std::right << "" << '|';
-			std::cout << std::setw(SIZE) << "";
-			for (int i = 0; i < SIZE; i++) std::cout << i << ' ';
+			//setcolor(2, 62, 138);
+			setbgcolor(188, 212, 230);//blue
+			std::cout << BLUE << std::setw(cols/4-4) << "" << std::setw(cols/4+4) << std::left << "My Fleet" << RESET << "|";
+			//setcolor(208, 0, 0);
+			setbgcolor(253, 226, 228);//red
+			std::cout << RED << std::setw(cols/4+5) << std::right << "Enemy Fleet" << std::setw(cols/4-2) << RESET << std::endl;
+			resetcolor();
+			std::cout << std::setfill('-') << std::setw(cols) << "" << std::endl << std::endl;
+			std::cout << std::setfill(' ') << std::setw(cols/4-SIZE*2+SIZE/2) << "";
+			for (int i = 0; i < SIZE; i++) {
+				setbgcolor(88,111,124);//#s
+				std::cout << BOLDWHITE << i << "  " << RESET; 
+			}
+			resetcolor();
+			std::cout << std::setw(cols/4-SIZE*2+SIZE/2) << std::right << "" << '|';
+			std::cout << std::setw(cols/4-SIZE*2+SIZE/2) << "";
+			for (int i = 0; i < SIZE; i++) {
+				setbgcolor(88,111,124);//#s	
+				std::cout << BOLDWHITE << i << "  " << RESET;
+			}
+			resetcolor();
 			std::cout << std::endl;
 			for (int j = 0; j < SIZE; j++) {
-				std::cout << std::setw(SIZE-2) << "";
-				std::cout << char('A'+j) << " ";
-				for (int k = 0; k < SIZE; k++) std::cout << myBoard[j][k] << " ";
-				std::cout << std::setw(SIZE) << "" << '|';
-				std::cout << std::setw(SIZE-2) << "";
-				std::cout << char('A'+j) << " ";
-				for (int k = 0; k < SIZE; k++) std::cout << myAttackBoard[j][k] << " ";
+				std::cout << std::setw(cols/4-(SIZE+3+SIZE/2)) << "";
+				setbgcolor(88,111,124);//alpha
+
+				std::cout << BOLDWHITE << char('A'+j) << "  " << RESET;
+				std::string color = "";
+				for (int k = 0; k < SIZE; k++) {
+					char boardUnit = myBoard[j][k];
+					if (boardUnit == WATER) color = BOLDCYAN;
+					else if (boardUnit == MISS) color = RED;
+					else if (boardUnit == HIT) color = YELLOW;
+					else color = BOLDWHITE;
+					setbgcolor(47,69,80);//water
+					std::cout << color << myBoard[j][k] << "  " << RESET;
+				}
+				resetcolor();
+				std::cout << std::setw(cols/4-(SIZE+SIZE/2)) << "" << '|';
+				std::cout << std::setw(cols/4-(SIZE+3+SIZE/2)) << "";
+				setbgcolor(88,111,124);//alpha
+				
+				std::cout << BOLDWHITE << char('A'+j) << "  " << RESET;
+				for (int k = 0; k < SIZE; k++) {
+					char boardUnit = myAttackBoard[j][k];
+					if (boardUnit == WATER) color = CYAN;
+					else if (boardUnit == MISS) color = RED;
+					else color = YELLOW;//if HIT
+					setbgcolor(47,69,80);//water
+					std::cout << color << myAttackBoard[j][k] << "  " << RESET;
+				}
+				resetcolor();
 				std::cout << std::setw(SIZE) << "";
 				std::cout << std::endl;
 			}
 			std::cout << std::endl;
-			std::cout << std::setfill('-') << std::setw(SIZE*8+1) << "" << std::endl;
+			std::cout << std::setfill('-') << std::setw(cols) << "" << std::endl;
 			std::cout << std::setfill(' ');
 		}
 
@@ -114,22 +163,56 @@ class Battleship_Player {
 			myWarships.push_back(destroyer);
 			clearscreen();
 			printBoards();
-			std::cout << "Enter the coordinates for the stern of your warship and then the orientation(S = South, E = East) in the format: A 1 S" << std::endl;
+			auto [t_rows,t_cols] = get_terminal_size();
+			
 			for (Battleship &ship : myWarships) {
-				std::cout << ship.name << "{length " << ship.length << "): ";
 				
 				while(true) {
-					char row = read();
-					int column = read();
-					char ori = read();
-					if (placeShip(ship,row,column,ori)) break;
+					int row = 0;
+					int column = 0;
+					int ori = 0;
+					movecursor(25, t_cols/8);
+					std::cout << "Enter the coordinates for the stern of your warship and then the orientation(S = South, E = East) in the format: A1S" << std::endl;	
+					movecursor(27, 3*t_cols/8);
+					std::cout << ship.name << "{length " << ship.length << "): " <<std::flush;
+
+					set_raw_mode(true);
+					while(true) {
+						row = quick_read();
+						if (row >= 'A' and row != 127) break;
+					}
+					set_raw_mode(false);
+					std::cout << (char)row << std::flush;
+					set_raw_mode(true);
+					while(true) {
+						column = quick_read();
+						if (column >= '0' and row != 127) break;
+					}
+					set_raw_mode(false);
+					std::cout << (char)column << std::flush;
+					set_raw_mode(true);
+					while(true) {
+						ori = quick_read();
+						if (ori >= 'A' and row != 127) break;
+					}
+					set_raw_mode(false);
+					std::cout << (char)ori << std::flush;
+					usleep(200000);
+					if (placeShip(ship,(char)row,column-'0',(char)ori)) break;
+					sleep(2);
+					clear_bottom_screen(2);
+					movecursor(27, 3*t_cols/8);
+
 				}
+				set_raw_mode(false);
 				clearscreen();
 				printBoards();
 			}
 		}
 
 		std::string oppAttack(char row, int col) {
+			auto[t_rows,t_cols] = get_terminal_size();
+			//movecursor(27,t_cols/2-24);
 			if (row >= 'A' + SIZE or row < 'A' or col >= SIZE or col < 0) {
 				return "Out of bounds! Please enter a valid coordinate";
 			}

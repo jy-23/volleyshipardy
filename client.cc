@@ -22,7 +22,7 @@ using namespace std;
 using boost::asio::ip::tcp;
 
 int main(int argc, char* argv[])
-{ srand(time(0)+1);
+{ srand(time(0)+2);
 	try
 	{
 		/*if (argc != 3)
@@ -46,21 +46,28 @@ int main(int argc, char* argv[])
 		vector<trivia_question> vec;
 		input_questions(vec);
 
-
+		auto[t_rows,t_cols] = get_terminal_size();
 		//initialize battleship
 		p2.initialize();
+		movecursor(25, t_cols/2-26);
 
 		s << MSG_READY_TO_PLAY << endl;
+		cout << "Waiting for Player 1 to finish deploying their battleships..." << flush;
 		s >> message_code;
-		
+		clear_bottom_screen(0);
 		double time_to_beat = 60;
 		while(true) {
 			p2.printBoards();
+			clear_bottom_screen(0);
+			movecursor(25, t_cols/2-7);
 			cout << "Player 1's Turn: \n" << endl;
 			if(sendAttack(p2, s)) return 0;
 			s >> time_to_beat;
 			p2.printBoards();
+			clear_bottom_screen(0);
+			movecursor(25, t_cols/2-5);
 			cout << "Your Turn: \n" << endl;
+			sleep(1);
 			
 			if (!volleyball(time_to_beat, vec)) {
 				//player 1 makes shots

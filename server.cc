@@ -43,11 +43,13 @@ int main()
       tcp::iostream stream;
       boost::system::error_code ec;
 	  clearscreen();
+	  movecursor(0,0);
 	  cout << "Waiting for player 2 to connect" << endl;
       acceptor.accept(stream.socket(), ec);
       if (!ec)
       { 
 		clearscreen();
+		movecursor(0,0);
 		cout << "Connected!" << endl;
 		usleep(333333);
 		int message_code = 0;
@@ -57,17 +59,21 @@ int main()
 		vector<trivia_question> vec;
 		input_questions(vec);
 		
+		auto[t_rows,t_cols] = get_terminal_size();
 		//initialize battleship
 		p1.initialize();
+		movecursor(25,t_cols/2-26);
 		//cout << "Player 1\n" << endl;
 
 		stream << MSG_READY_TO_PLAY << endl;
+		cout << "Waiting for Player 2 to finish deploying their battleships..." << flush;
 		stream >> message_code;
-
-
+		clear_bottom_screen(0);
 		double time_to_beat = 60;
 		while (true) {
 			p1.printBoards();
+			clear_bottom_screen(0);
+			movecursor(25,t_cols/2-5);
 			cout << "Your Turn: \n" << endl;
 			if (!volleyball(time_to_beat, vec)) {
 				if(!receiveAttack(p1, stream)) return 0;
@@ -79,6 +85,8 @@ int main()
 			
 			stream << time_to_beat << endl;
 			p1.printBoards();
+			clear_bottom_screen(0);
+			movecursor(25,t_cols/2-7);
 			cout << "Player 2's Turn" << endl;
 			if (sendAttack(p1, stream)) return 0;
 			stream >> time_to_beat;
