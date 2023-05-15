@@ -12,6 +12,7 @@ bool volleyball(double &time_to_beat, std::vector<trivia_question> &vec) {
 	//print random question
 	int question_num = rand() % vec.size();
 	trivia_question current = vec.at(question_num);
+
 	current.print_question();
 	
 	//movecursor(40, 5);
@@ -41,7 +42,7 @@ bool volleyball(double &time_to_beat, std::vector<trivia_question> &vec) {
 			std::cout << "Correct!" << std::endl;
 			movecursor(27, t_cols/2-12);
 			std::cout << "Time taken: " << elapsed_time << " seconds\n" << std::endl;
-			sleep(2);
+			sleep(1.5);
 			time_to_beat = elapsed_time;
 			return true;
 		}
@@ -49,13 +50,13 @@ bool volleyball(double &time_to_beat, std::vector<trivia_question> &vec) {
 		std::cout << "Correct but too SLOW!" << std::endl;
 		movecursor(27,t_cols/2-12);
 		std::cout << "Time taken: " << elapsed_time << " seconds\n" << std::endl;
-		sleep(2);
+		sleep(1.5);
 		return false;
 	}
 	else {
 		movecursor(25, t_cols/2-5);
 		std::cout << "Incorrect!\n" << std::endl;
-		sleep(2);
+		sleep(1.5);
 		return false;
 	}
 }

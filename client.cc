@@ -60,13 +60,13 @@ int main(int argc, char* argv[])
 			p2.printBoards();
 			clear_bottom_screen(0);
 			movecursor(25, t_cols/2-7);
-			cout << "Player 1's Turn: \n" << endl;
+			cout << "Player 1's Turn" << flush;
 			if(sendAttack(p2, s)) return 0;
 			s >> time_to_beat;
 			p2.printBoards();
 			clear_bottom_screen(0);
 			movecursor(25, t_cols/2-5);
-			cout << "Your Turn: \n" << endl;
+			cout << "Your Turn\n" << endl;
 			sleep(1);
 			
 			if (!volleyball(time_to_beat, vec)) {

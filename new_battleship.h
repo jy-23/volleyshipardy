@@ -5,6 +5,7 @@
 #include "/public/read.h"
 #include "/public/colors.h"
 
+
 static const char CRUISER = 'C';
 static const char BATTLESHIP = 'B';
 static const char SUBMARINE = 'S';
@@ -15,6 +16,13 @@ static const char HIT = '*';
 static const char MISS = 'X';
 
 static const int SIZE = 10;
+
+static const int MSG_HIT = 105;
+static const int MSG_MISS = 106;
+static const int MSG_OUT_OF_BOUNDS = 107;
+static const int MSG_ALREADY_ATTACKED = 108;
+static const int MSG_YOU_WON = 109;
+
 
 void clear_bottom_screen(int row_change) {
 	auto[rows,cols] = get_terminal_size();
@@ -209,29 +217,31 @@ class Battleship_Player {
 				printBoards();
 			}
 		}
-
-		std::string oppAttack(char row, int col) {
+		
+		//returns message codes for networking
+		int oppAttack(char row, int col) {
 			auto[t_rows,t_cols] = get_terminal_size();
-			//movecursor(27,t_cols/2-24);
 			if (row >= 'A' + SIZE or row < 'A' or col >= SIZE or col < 0) {
-				return "Out of bounds! Please enter a valid coordinate";
+				//return "Out of bounds! Please enter a valid coordinate";
+				return MSG_OUT_OF_BOUNDS;
 			}
 			else if (myBoard[row - 'A'][col] == HIT or myBoard[row - 'A'][col] == MISS) {
-				return "Already attacked! Please enter a new coordinate to attack";
+				//return "Already attacked! Please enter a new coordinate to attack";
+				return MSG_ALREADY_ATTACKED;
 			}
 			else if (myBoard[row - 'A'][col] == WATER) {
 				myBoard[row - 'A'][col] = MISS;
 				clearscreen();
 				printBoards();
-				return "MISS!";
+				return MSG_MISS;
 			}
 			else {
 				++hitCount;
 				myBoard[row - 'A'][col] = HIT;
 				clearscreen();
 				printBoards();
-				if (hitCount == 17) return "VICTORY!";
-				return "HIT";
+				if (hitCount == 17) return MSG_YOU_WON;
+				return MSG_HIT;
 			}
 		}
 

@@ -74,7 +74,7 @@ int main()
 			p1.printBoards();
 			clear_bottom_screen(0);
 			movecursor(25,t_cols/2-5);
-			cout << "Your Turn: \n" << endl;
+			cout << "Your Turn\n" << endl;
 			if (!volleyball(time_to_beat, vec)) {
 				if(!receiveAttack(p1, stream)) return 0;
 				time_to_beat = 60;
@@ -87,7 +87,7 @@ int main()
 			p1.printBoards();
 			clear_bottom_screen(0);
 			movecursor(25,t_cols/2-7);
-			cout << "Player 2's Turn" << endl;
+			cout << "Player 2's Turn" << flush;
 			if (sendAttack(p1, stream)) return 0;
 			stream >> time_to_beat;
 		}
