@@ -1,4 +1,4 @@
-all: client server
+all: client server a.out
 
 client: client.cc common.h
 	g++ -pthread -O3 -g -o client client.cc

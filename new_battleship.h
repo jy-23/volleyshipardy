@@ -4,7 +4,6 @@
 #include <vector>
 #include "/public/read.h"
 #include "/public/colors.h"
-#include <gtest/gtest.h>
 
 
 static const char CRUISER = 'C';
@@ -23,7 +22,6 @@ static const int MSG_MISS = 106;
 static const int MSG_OUT_OF_BOUNDS = 107;
 static const int MSG_ALREADY_ATTACKED = 108;
 static const int MSG_YOU_WON = 109;
-
 
 void clear_bottom_screen(int row_change) {
 	auto[rows,cols] = get_terminal_size();
@@ -85,21 +83,16 @@ class Battleship_Player {
 				return true;
 			}
 		}
-	//Testing
-	Battleship w {"w", 'w', 3};
-	FRIEND_TEST(battleship, oppAttack); 
-	FRIEND_TEST(battleship, placeShip);
-
 	public:
 		Battleship_Player() {}
 		void setName(std::string userName) { name = userName; }
 		std::string getName() { return name; }
 		void printBoards() {
 			auto [rows,cols] = get_terminal_size();
-			movecursor(0,0);
-			setcolor(214, 226, 233);
+			movecursor(8,0);
+			/*setcolor(214, 226, 233);
 			if(system ("figlet -c -t *Volleyshipardy*")) {};
-			resetcolor();
+			resetcolor();*/
 
 
 			std::cout << std::setfill('-') << std::setw(cols) << "" << std::endl;
@@ -226,7 +219,7 @@ class Battleship_Player {
 		
 		//returns message codes for networking
 		int oppAttack(char row, int col) {
-			auto[t_rows,t_cols] = get_terminal_size();
+			//auto[t_rows,t_cols] = get_terminal_size();
 			if (row >= 'A' + SIZE or row < 'A' or col >= SIZE or col < 0) {
 				//return "Out of bounds! Please enter a valid coordinate";
 				return MSG_OUT_OF_BOUNDS;
@@ -237,15 +230,15 @@ class Battleship_Player {
 			}
 			else if (myBoard[row - 'A'][col] == WATER) {
 				myBoard[row - 'A'][col] = MISS;
-				clearscreen();
-				printBoards();
+				//clearscreen();
+				//printBoards();
 				return MSG_MISS;
 			}
 			else {
 				++hitCount;
 				myBoard[row - 'A'][col] = HIT;
-				clearscreen();
-				printBoards();
+				//clearscreen();
+				//printBoards();
 				if (hitCount == 17) return MSG_YOU_WON;
 				return MSG_HIT;
 			}
