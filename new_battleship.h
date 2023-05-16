@@ -83,6 +83,9 @@ class Battleship_Player {
 				return true;
 			}
 		}
+		Battleship w {"w", 'w', 3};
+		FRIEND_TEST(battleship, oppAttack);
+		FRIEND_TEST(battleship, placeShip);
 	public:
 		Battleship_Player() {}
 		void setName(std::string userName) { name = userName; }
