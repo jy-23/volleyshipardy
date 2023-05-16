@@ -48,6 +48,11 @@ int main(int argc, char* argv[])
 
 		auto[t_rows,t_cols] = get_terminal_size();
 		//initialize battleship
+		movecursor(0,0);
+		setcolor(214,226,233);
+		if (system("figlet -c -t *Volleyshipardy*")) {};
+		resetcolor();
+
 		p2.initialize();
 		movecursor(25, t_cols/2-26);
 

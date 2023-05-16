@@ -84,27 +84,21 @@ class Battleship_Player {
 				return true;
 			}
 		}
-//<<<<<<< HEAD
 		//Testing
 		Battleship w {"w", 'w', 3};
 		FRIEND_TEST(battleship, oppAttack);
 		FRIEND_TEST(battleship, placeShip);
 
-/*=======
-		Battleship w {"w", 'w', 3};
-		FRIEND_TEST(battleship, oppAttack);
-		FRIEND_TEST(battleship, placeShip);
->>>>>>> af2f2a4a45ad7c37f21d6f80faa8ced06f30999c*/
 	public:
 		Battleship_Player() {}
 		void setName(std::string userName) { name = userName; }
 		std::string getName() { return name; }
 		void printBoards() {
 			auto [rows,cols] = get_terminal_size();
-			movecursor(8,0);
-			/*setcolor(214, 226, 233);
+			movecursor(0,0);
+			setcolor(214, 226, 233);
 			if(system ("figlet -c -t *Volleyshipardy*")) {};
-			resetcolor();*/
+			resetcolor();
 
 
 			std::cout << std::setfill('-') << std::setw(cols) << "" << std::endl;
@@ -242,15 +236,15 @@ class Battleship_Player {
 			}
 			else if (myBoard[row - 'A'][col] == WATER) {
 				myBoard[row - 'A'][col] = MISS;
-				//clearscreen();
-				//printBoards();
+				clearscreen();
+				printBoards();
 				return MSG_MISS;
 			}
 			else {
 				++hitCount;
 				myBoard[row - 'A'][col] = HIT;
-				//clearscreen();
-				//printBoards();
+				clearscreen();
+				printBoards();
 				if (hitCount == 17) return MSG_YOU_WON;
 				return MSG_HIT;
 			}

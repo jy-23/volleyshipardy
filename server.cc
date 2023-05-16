@@ -43,13 +43,20 @@ int main()
       tcp::iostream stream;
       boost::system::error_code ec;
 	  clearscreen();
+	  auto[t_rows,t_cols] = get_terminal_size();
+
 	  movecursor(0,0);
+	  setcolor(214, 226, 233);
+	  if (system("figlet -c -t *Volleyshipardy*")) {};
+	  resetcolor();
+	  
+	  movecursor(25,t_cols/2-17);
 	  cout << "Waiting for player 2 to connect" << endl;
       acceptor.accept(stream.socket(), ec);
       if (!ec)
       { 
-		clearscreen();
-		movecursor(0,0);
+		clear_bottom_screen(0);
+		movecursor(25,t_cols/2-5);
 		cout << "Connected!" << endl;
 		usleep(333333);
 		int message_code = 0;
@@ -59,7 +66,6 @@ int main()
 		vector<trivia_question> vec;
 		input_questions(vec);
 		
-		auto[t_rows,t_cols] = get_terminal_size();
 		//initialize battleship
 		p1.initialize();
 		movecursor(25,t_cols/2-26);
