@@ -1,17 +1,20 @@
 #include <iostream>
 #include <time.h>
 #include <cstdlib>
-#include "jeopardy.h"
-#include "volleyball.h"
+//#include "jeopardy.h"
+//#include "volleyball.h"
 #include "new_battleship.h"
 #include <gtest/gtest.h>
 
 using namespace std;
 
-int main() {
+int main(int argc, char** argv) {
+	testing::InitGoogleTest(&argc, argv);
+	return RUN_ALL_TESTS();
 	Battleship_Player p1;
 	p1.printBoards();
 	p1.initialize();
+	
 	/*
 	srand(time(0));
 	vector<trivia_question> vec;
@@ -34,7 +37,7 @@ int main() {
 			time_to_beat = 60;
 		}
 	}*/
-	
+}	
 Battleship_Player *b;
 
 TEST(battleship, oppAttack) {
