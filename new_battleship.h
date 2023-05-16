@@ -84,11 +84,17 @@ class Battleship_Player {
 				return true;
 			}
 		}
+//<<<<<<< HEAD
 		//Testing
 		Battleship w {"w", 'w', 3};
 		FRIEND_TEST(battleship, oppAttack);
 		FRIEND_TEST(battleship, placeShip);
 
+/*=======
+		Battleship w {"w", 'w', 3};
+		FRIEND_TEST(battleship, oppAttack);
+		FRIEND_TEST(battleship, placeShip);
+>>>>>>> af2f2a4a45ad7c37f21d6f80faa8ced06f30999c*/
 	public:
 		Battleship_Player() {}
 		void setName(std::string userName) { name = userName; }
