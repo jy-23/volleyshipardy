@@ -4,6 +4,7 @@
 //It uses standard ANSI escape codes to set the foreground and background text colors for a terminal
 //Prerequisite: Use with a modern terminal emulator, such as iterm2 for Mac or PuTTY for PC
 #include <cstdlib>
+#include <cstdint>
 #include <string>
 #include <iostream>
 #include <cstdio>
