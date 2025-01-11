@@ -1,4 +1,6 @@
 # volleyshipardy
-Hi, this is a demo readme.md file -
-```int x = read();```
-![JERMA](imgs/IMG_5920.png)
+Volleyshipardy is a two player game with one player on the server side and another on the client side. 
+
+The game itself is essentially a mix of volleyball, battleship, and jeopardy (hence the name ‘Volleyshipardy’). 
+
+Once connection between server and client has been successfully established, both players start by placing battleships onto their board. The board was created using a 2D vector—each player actually has two such vectors, one for their battleships and one that keeps track of their attacks. The game round begins and continues with each player taking turns to answer a question from a quiz bank. The catch here is that each player must answer faster than their opponent’s previous time, meaning that as the round proceeds, players will need to answer faster and faster. This was achieved by recording the time at the start of a player’s turn and recording the time when a player submitted their answer and then taking the difference. The round ends if a player answers incorrectly or too slowly. The winner of the round is then given a chance to attack the opponent’s board to try and hit their battleships. The player’s attacks are compared to the opponent’s battleship vector to determine if it is a hit or miss. The player’s attacks are also recorded in their own attack vector such that the player can view which areas were already hit or missed. The game ends when all of a player’s battleships have been sunk. 
